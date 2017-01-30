@@ -594,8 +594,30 @@ class Message implements \JsonSerializable
             'collapse_key' => $this->collapseKey,
             'time_to_live' => $this->ttl,
             'delay_while_idle' => $this->delayWhileIdle,
+            'notification' => $this->getGcmNotificationJson(),
             'data' => $this->getTrimmedJson([$this, 'getGcmJsonInner'], static::GCM_MAX_LENGTH, 'You message for GCM is too long')
         ], JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Gets the notification part of the GCM message
+     */
+    private function getGcmNotificationJson()
+    {
+        $notification = [];
+        if (!is_null($this->text)) {
+            $notification['body'] = $this->text;
+        }
+
+        if (!is_null($this->badge)) {
+            $notification['badge'] = $this->badge;
+        }
+
+        if (!is_null($this->sound)) {
+            $notification['sound'] = $this->sound;
+        }
+
+        return $notification;
     }
 
     /**
